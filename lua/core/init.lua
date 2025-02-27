@@ -1,0 +1,5 @@
+require("core.remap")
+require("core.lazy")
+require("core.theme")
+require("core.config")
+require("core.neovide")
