@@ -14,3 +14,5 @@ Requirements:
 - A C compiler (such as `gcc` or `clang`) for compiling Treesitter parsers
 - `ripgrep` for fuzzy search
 - Any desired language servers (`rust-analyzer`, `clangd`, `bash-language-server`, etc)
+
+On first launch, Treesitter will compile all parsers automatically, which may take a few minutes.
