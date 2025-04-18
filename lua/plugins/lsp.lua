@@ -25,7 +25,6 @@ return {
         vim.keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "Go to definition" })
         vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { desc = "Go to declaration" })
         vim.keymap.set("n", "gi", vim.lsp.buf.implementation, { desc = "Go to implementation" })
-        vim.keymap.set("n", "go", vim.lsp.buf.type_definition, { desc = "Go to object type definition" })
         vim.keymap.set("n", "<leader>r", vim.lsp.buf.rename, { desc = "Rename symbol under cursor" })
         vim.keymap.set("n", "<F2>", vim.lsp.buf.rename, { desc = "Rename symbol under cursor" })
         vim.keymap.set("n", "<leader>a", vim.lsp.buf.code_action, { desc = "Open code actions" })
@@ -33,6 +32,9 @@ return {
 
         -- use telescope for LSP references, etc
         vim.keymap.set("n", "gr", "<cmd>Telescope lsp_references<cr>", { buffer = buffnr, desc = "Go to references" })
+        vim.keymap.set("n", "go", "<cmd>Telescope lsp_type_definitions<cr>", { desc = "Go to object type definition" })
+        vim.keymap.set("n", "<leader>d", "<cmd>Telescope diagnostics bufnr=0<cr>", { desc = "Open file diagnostic list" })
+        vim.keymap.set("n", "<leader>D", "<cmd>Telescope diagnostics<cr>", { desc = "Open workspace diagnostic list" })
 
         -- Use navic for context hints
         if client.supports_method("textDocument/documentSymbol") then
@@ -148,24 +150,6 @@ return {
     event = "LspAttach",
     opts = {
       scope = "line",
-    },
-  },
-  {
-    "folke/trouble.nvim",
-    dependencies = { "nvim-tree/nvim-web-devicons" },
-    cmd = { "Trouble" },
-    keys = {
-      { "<leader>d", "<cmd>Trouble diagnostics toggle filter.buf=0<cr>", desc = "Open file diagnostic list" },
-      { "<leader>D", "<cmd>Trouble diagnostics toggle<cr>", desc = "Open workspace diagnostic list" },
-    },
-    opts = {
-      focus = true,
-      use_diagnostic_signs = true,
-      keys = {
-        -- both q and <esc> to close trouble
-        q = "close",
-        ["<esc>"] = "close",
-      },
     },
   },
 
