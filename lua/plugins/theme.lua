@@ -12,6 +12,15 @@ return {
         lsp_trouble = true,
         which_key = true,
       },
+      -- transparent_background needs some highlight fixups
+      custom_highlights = function(colors)
+        return {
+          -- fixup telescope selection color
+          TelescopeSelection = { fg = colors.text, bg = colors.surface0 },
+          -- make bufferline more readable
+          BufferlineFill = { bg = colors.mantle },
+        }
+      end,
     },
   },
   {
