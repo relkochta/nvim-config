@@ -17,8 +17,8 @@ return {
         return {
           -- fixup telescope selection color
           TelescopeSelection = { fg = colors.text, bg = colors.surface0 },
-          -- make bufferline more readable
-          BufferlineFill = { bg = colors.mantle },
+          -- clearer delineation for which-key
+          WhichKeyNormal = { bg = colors.mantle },
         }
       end,
     },

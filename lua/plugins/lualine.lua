@@ -5,6 +5,11 @@ return {
       "SmiteshP/nvim-navic",
     },
     opts = {
+      tabline = {
+        lualine_b = {
+          "filename",
+        },
+      },
       sections = {
         lualine_c = {
           { "navic" },

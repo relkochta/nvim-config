@@ -39,21 +39,6 @@ return {
       {
         "MunifTanjim/nui.nvim"
       },
-      --{
-      --  "rcarriga/nvim-notify",
-      --  keys = {
-      --    {
-      --      "<leader>u",
-      --      function()
-      --        require("notify").dismiss()
-      --      end,
-      --      desc = "Dismiss all notifications"
-      --    },
-      --  },
-      --  opts = {
-      --    top_down = false,
-      --  },
-      --},
     }
   }
 }

@@ -4,6 +4,7 @@ return {
     dependencies = {
       "nvim-lua/plenary.nvim",
       "BurntSushi/ripgrep",
+      "nvim-tree/nvim-web-devicons",
     },
     keys = {
       { "<leader>f", "<cmd>Telescope find_files<cr>", desc = "Open file picker", },
@@ -27,6 +28,10 @@ return {
         },
       },
       pickers = {
+        buffers = {
+          -- sort buffers in order of last-use
+          sort_lastused = true,
+        },
         diagnostics = {
           theme = "dropdown",
           layout_config = {
@@ -34,13 +39,31 @@ return {
           },
         },
       },
+      extensions = {
+        file_browser = {
+          mappings = {},
+        },
+      },
     },
     config = function(_, opts)
       local actions = require("telescope.actions")
+      -- close on esc
       opts.defaults.mappings = { i = { ["<esc>"] = actions.close } }
+      -- except for in the file browser
+      opts.extensions.file_browser.mappings = { i = { ["<esc>"] = function() vim.cmd("stopinsert") end } }
 
       local telescope = require("telescope")
       telescope.setup(opts)
+    end,
+  },
+  {
+    "nvim-telescope/telescope-file-browser.nvim",
+    keys = {
+      { "<leader>e", "<cmd>Telescope file_browser<cr>", desc = "Open file explorer", },
+    },
+    dependencies = { "nvim-telescope/telescope.nvim" },
+    config = function()
+      require("telescope").load_extension("file_browser")
     end,
   },
   {
