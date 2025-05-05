@@ -19,6 +19,8 @@ return {
           TelescopeSelection = { fg = colors.text, bg = colors.surface0 },
           -- clearer delineation for which-key
           WhichKeyNormal = { bg = colors.mantle },
+          -- right-click menu
+          Pmenu = { bg = colors.mantle },
         }
       end,
     },
