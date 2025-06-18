@@ -29,7 +29,7 @@ vim.api.nvim_create_autocmd("FileType", {
 
 return {
   {
-    "VonHeikemen/lsp-zero.nvim",
+    "neovim/nvim-lspconfig",
     opts = {
       my_servers = {
         tinymist = {

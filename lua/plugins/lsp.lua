@@ -1,53 +1,58 @@
 return {
   {
-    "VonHeikemen/lsp-zero.nvim",
-    branch = "v3.x",
+    "neovim/nvim-lspconfig",
+    event = { "BufReadPre", "BufNewFile" },
     dependencies = {
-      "neovim/nvim-lspconfig",
       "SmiteshP/nvim-navic",
     },
     opts = {
-      -- Servers configured in my_servers will automatically have
-      -- require("lspconfig")[server].setup(server_opts) called on them
+      -- Servers configured in my_servers will be automatically configured
       my_servers = {},
     },
     config = function(_, opts)
-      local lsp_zero = require("lsp-zero")
       local lspconfig = require("lspconfig")
 
-      -- enable lsp-zero
-      lsp_zero.on_attach(function(client, buffnr)
-        -- set lsp keybinds
-        -- NOTE: this check is needed since crates.nvim will overwrite "K"
-        if not vim.fn.mapcheck("K", "n") then
-          vim.keymap.set("n", "K", vim.lsp.buf.hover, { desc = "Show documentation" })
-        end
-        vim.keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "Go to definition" })
-        vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { desc = "Go to declaration" })
-        vim.keymap.set("n", "gi", vim.lsp.buf.implementation, { desc = "Go to implementation" })
-        vim.keymap.set("n", "<leader>r", vim.lsp.buf.rename, { desc = "Rename symbol under cursor" })
-        vim.keymap.set("n", "<F2>", vim.lsp.buf.rename, { desc = "Rename symbol under cursor" })
-        vim.keymap.set("n", "<leader>a", vim.lsp.buf.code_action, { desc = "Open code actions" })
-        vim.keymap.set("n", "<leader>m", vim.lsp.buf.format, { desc = "Format current file" })
+      -- configure keybinds + navic at attach time
+      vim.api.nvim_create_autocmd("LspAttach", {
+        callback = function(args)
+          local client = assert(vim.lsp.get_client_by_id(args.data.client_id))
 
-        -- use telescope for LSP references, etc
-        vim.keymap.set("n", "gr", "<cmd>Telescope lsp_references<cr>", { buffer = buffnr, desc = "Go to references" })
-        vim.keymap.set("n", "go", "<cmd>Telescope lsp_type_definitions<cr>", { desc = "Go to object type definition" })
-        vim.keymap.set("n", "<leader>d", "<cmd>Telescope diagnostics bufnr=0<cr>", { desc = "Open file diagnostic list" })
-        vim.keymap.set("n", "<leader>D", "<cmd>Telescope diagnostics<cr>", { desc = "Open workspace diagnostic list" })
+          -- set lsp keybinds
+          -- NOTE: this check is needed since crates.nvim will overwrite "K"
+          if not vim.fn.mapcheck("K", "n") then
+            vim.keymap.set("n", "K", vim.lsp.buf.hover, { desc = "Show documentation" })
+          end
+          vim.keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "Go to definition" })
+          vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { desc = "Go to declaration" })
+          vim.keymap.set("n", "gi", vim.lsp.buf.implementation, { desc = "Go to implementation" })
+          vim.keymap.set("n", "<leader>r", vim.lsp.buf.rename, { desc = "Rename symbol under cursor" })
+          vim.keymap.set("n", "<F2>", vim.lsp.buf.rename, { desc = "Rename symbol under cursor" })
+          vim.keymap.set("n", "<leader>a", vim.lsp.buf.code_action, { desc = "Open code actions" })
+          vim.keymap.set("n", "<leader>m", vim.lsp.buf.format, { desc = "Format current file" })
 
-        -- Use navic for context hints
-        if client.supports_method("textDocument/documentSymbol") then
-          require("nvim-navic").attach(client, buffnr)
-        end
-      end)
+          -- use telescope for LSP references, etc
+          vim.keymap.set("n", "gr", "<cmd>Telescope lsp_references<cr>", { buffer = buffnr, desc = "Go to references" })
+          vim.keymap.set("n", "go", "<cmd>Telescope lsp_type_definitions<cr>", { desc = "Go to object type definition" })
+          vim.keymap.set("n", "<leader>d", "<cmd>Telescope diagnostics bufnr=0<cr>", { desc = "Open file diagnostic list" })
+          vim.keymap.set("n", "<leader>D", "<cmd>Telescope diagnostics<cr>", { desc = "Open workspace diagnostic list" })
+
+          -- Use navic for context hints
+          if client.supports_method("textDocument/documentSymbol") then
+            require("nvim-navic").attach(client, args.buf)
+          end
+        end,
+      })
 
       -- use pretty icons instead of 'W', 'E', ...
-      lsp_zero.set_sign_icons({
-        error = '✘',
-        warn = '▲',
-        hint = '⚑',
-        info = '»'
+      vim.diagnostic.config({
+        signs = {
+          text = {
+            [vim.diagnostic.severity.ERROR] = '✘',
+            [vim.diagnostic.severity.WARN] = '▲',
+            [vim.diagnostic.severity.HINT] = '⚑',
+            [vim.diagnostic.severity.INFO] = '»',
+          },
+        },
       })
 
       -- disable LSP logging
@@ -56,7 +61,8 @@ return {
       -- Set up language servers
       local servers = opts.my_servers
       for server, server_opts in pairs(servers) do
-        require("lspconfig")[server].setup(server_opts)
+        vim.lsp.config(server, server_opts)
+        vim.lsp.enable(server)
       end
     end,
   },
@@ -116,6 +122,8 @@ return {
           { name = "buffer" },
         }),
         mapping = {
+          ["<Up>"] = cmp.mapping.select_prev_item({}, {'i'}),
+          ["<Down>"] = cmp.mapping.select_next_item({}, {'i'}),
           -- Use "Enter" for auto completion
           ["<cr>"] = cmp.mapping.confirm({select = false}),
           ["<Tab>"] = tab_mapping,
@@ -150,6 +158,9 @@ return {
     event = "LspAttach",
     opts = {
       scope = "line",
+
+      -- don't show diagnostics in insert mode
+      toggle_event = { "InsertEnter" },
     },
   },
 

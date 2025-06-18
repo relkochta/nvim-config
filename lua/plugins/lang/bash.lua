@@ -1,6 +1,6 @@
 return {
   {
-    "VonHeikemen/lsp-zero.nvim",
+    "neovim/nvim-lspconfig",
     opts = {
       my_servers = {
         bashls = {},
